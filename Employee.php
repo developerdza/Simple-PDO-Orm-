@@ -12,7 +12,7 @@ class EmployeeClass extends AbstractClass
         'salary',
         'tax'
     );
-    public function __construct($id,$name,$address,$salary,$tax){
+    public function __construct($id=null,$name=null,$address=null,$salary=null,$tax=null){
          $this->id =$id;
          $this->name = $name;
          $this->address = $address;
