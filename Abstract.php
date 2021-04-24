@@ -93,6 +93,50 @@ class AbstractClass
    
 }
 
+    
+    ublic static function get( $options , $closure){
+    global $conn;
+
+    $params = '';
+    foreach($options  as $coulomName=> $value)
+    {
+       $params .= $coulomName .'=:'.$coulomName.' '.$closure.' '; 
+    }
+    $params= trim($params ,' '.$closure.' ');
+    $gettingCoulomns = '';
+
+    foreach($options  as $coulomName => $value)
+    {
+        $gettingCoulomns .= $coulomName.','; 
+    }
+
+    $gettingCoulomns = trim($gettingCoulomns , ',');
+    
+    $sql = 'SELECT '. $gettingCoulomns.'  FROM'.' '.static::$tableName .' WHERE (' . $params .' )' ;
+    //var_dump($sql);
+    $stm = $conn->prepare($sql);
+
+    foreach($options as  $coulomName => $value){
+        $stm->bindValue(":{$coulomName}" , $value);
+       //$ar .= (":{$coulomName}".' ,'. $this->$coulomName);
+     }
+   
+     if($stm->execute()){
+        $objs = $stm->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE , get_called_class() , array_keys($options));
+        if(!empty($objs)){
+           return $objs;
+        }
+        else{
+            return 'No Found';
+        }
+      
+     }
+     else{
+       return False;
+   } 
+
+
+}
 
     public function save(){
          if ($this->{static::$primarykey} == null){ $this->update();}
